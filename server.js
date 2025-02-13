@@ -10,6 +10,16 @@ app.use(cors());
 
 // NSE Base URL
 const baseURL = 'https://www.nseindia.com';
+//const commonHeaders = {
+ // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+ // 'Referer': baseURL,
+ // 'Accept': 'application/json, text/plain, */*',
+ // 'Accept-Language': 'en-US,en;q=0.9',
+ // 'Connection': 'keep-alive',
+ // 'Cache-Control': 'no-cache',
+ // 'Pragma': 'no-cache'
+//};
+
 const commonHeaders = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
   'Referer': baseURL,
@@ -17,8 +27,12 @@ const commonHeaders = {
   'Accept-Language': 'en-US,en;q=0.9',
   'Connection': 'keep-alive',
   'Cache-Control': 'no-cache',
-  'Pragma': 'no-cache'
+  'Pragma': 'no-cache',
+  'Origin': baseURL,
+  'Host': 'www.nseindia.com',
+  'Upgrade-Insecure-Requests': '1'
 };
+
 
 // HTTPS Agent to bypass SSL (use with caution)
 const httpsAgent = new https.Agent({  
