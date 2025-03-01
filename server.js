@@ -10,15 +10,7 @@ app.use(cors());
 
 // NSE Base URL
 const baseURL = 'https://www.nseindia.com';
-//const commonHeaders = {
- // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
- // 'Referer': baseURL,
- // 'Accept': 'application/json, text/plain, */*',
- // 'Accept-Language': 'en-US,en;q=0.9',
- // 'Connection': 'keep-alive',
- // 'Cache-Control': 'no-cache',
- // 'Pragma': 'no-cache'
-//};
+
 
 const commonHeaders = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
@@ -56,6 +48,7 @@ async function getSessionCookies() {
     return null;
   }
 }
+https://www.nseindia.com/api/quote-equity?symbol=HDFCBANK
 
 // Fetch all indices
 app.get('/api/nse-data', async (req, res) => {
@@ -112,7 +105,42 @@ app.get('/api/nse-index', async (req, res) => {
   }
 });
 
+///get single data
+app.get('/api/nse-equity/:symbol', async (req, res) => {
+  try {
+    const { symbol } = req.params;
+    if (!symbol) {
+      return res.status(400).json({ message: 'Symbol parameter is required.' });
+    }
+
+    const cookies = await getSessionCookies();
+    if (!cookies) {
+      return res.status(500).json({ message: 'Failed to obtain session cookies.' });
+    }
+
+    const response = await axios.get(`${baseURL}/api/quote-equity?symbol=${encodeURIComponent(symbol)}`, {
+      headers: { 
+        ...commonHeaders, 
+        Cookie: cookies.join('; ') 
+      },
+      httpsAgent: httpsAgent,
+      timeout: 10000  // 10 seconds timeout
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error(`Failed to fetch NSE equity data for ${req.params.symbol}:`, error.message);
+    res.status(500).json({ message: 'Unable to fetch NSE equity data.' });
+  }
+});
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
+//mongodb+srv://sais31348:<anW2bQRhIw9e7dYz>@cluster0.hpatu.mongodb.net/
+
+//anW2bQRhIw9e7dYz
