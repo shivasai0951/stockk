@@ -3,10 +3,22 @@ const axios = require('axios');
 const cors = require('cors');
 const https = require('https');
 
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+dotenv.config();
+connectDB();
+
 app.use(cors());
+
+app.use(bodyParser.json());
+
+app.use("/api/users", userRoutes);
 
 // NSE Base URL
 const baseURL = 'https://www.nseindia.com';
@@ -48,7 +60,7 @@ async function getSessionCookies() {
     return null;
   }
 }
-https://www.nseindia.com/api/quote-equity?symbol=HDFCBANK
+http://localhost:3000/api/nse-equity/HDFCBANK
 
 // Fetch all indices
 app.get('/api/nse-data', async (req, res) => {
@@ -135,12 +147,14 @@ app.get('/api/nse-equity/:symbol', async (req, res) => {
 });
 
 
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 
-//mongodb+srv://sais31348:<anW2bQRhIw9e7dYz>@cluster0.hpatu.mongodb.net/
 
-//anW2bQRhIw9e7dYz
+
+//mongodb+srv://marco:BATS6NnEYA9ybb@stockdb.hpatu.mongodb.net/

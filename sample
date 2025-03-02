@@ -1,0 +1,35 @@
+# Register a User
+POST http://localhost:5000/api/users/register
+{
+  "name": "John Doe",
+  "contact": "1234567890",
+  "email": "john@example.com",
+  "password": "password123",
+  "userType": "admin"
+}
+
+# Login User
+POST http://localhost:5000/api/users/login
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+# Logout User
+POST http://localhost:5000/api/users/logout
+{
+  "email": "john@example.com"
+}
+
+DELETE http://localhost:5000/api/users/delete/:id
+
+curl -X GET http://localhost:5000/api/users
+
+curl -X PUT http://localhost:5000/api/users/update/USER_ID_HERE \
+     -H "Content-Type: application/json" \
+     -d '{
+           "name": "Updated Name",
+           "contact": "9876543210",
+           "email": "updated@example.com",
+           "password": "newpassword123"
+         }'
