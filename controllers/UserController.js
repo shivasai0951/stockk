@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 // Create User
 exports.createUser = async (req, res) => {
   try {
-    const { name, contact, email, password, userType } = req.body;
+    const { name, contact, email, password, userType, isSubscribe, subscribeType, subscribeMonth } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     
     const newUser = new User({
@@ -13,7 +13,11 @@ exports.createUser = async (req, res) => {
       email,
       password: hashedPassword,
       userType,
-      isLogin: false
+      isLogin: false,
+      isSubscribe,
+      subscribeType,
+      subscribeMonth
+      
     });
 
     await newUser.save();
@@ -22,6 +26,7 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Update User
 exports.updateUser = async (req, res) => {
@@ -56,6 +61,8 @@ exports.deleteUser = async (req, res) => {
 };
 
 // Login User
+const moment = require('moment');
+
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -68,6 +75,20 @@ exports.loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
+    // Check if userType is "user" and validate subscription
+    if (user.userType === "user") {
+      if (!user.isSubscribe) {
+        return res.status(400).json({ error: "You are not subscribed. Please subscribe to continue." });
+      }
+
+      const subscriptionEndDate = moment(user.subscribeMonth);
+      const currentDate = moment();
+
+      if (currentDate.isAfter(subscriptionEndDate)) {
+        return res.status(400).json({ error: "Your subscription has expired. Please renew to continue." });
+      }
+    }
+
     user.isLogin = true;
     await user.save();
 
@@ -76,6 +97,7 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Logout User
 exports.logoutUser = async (req, res) => {
